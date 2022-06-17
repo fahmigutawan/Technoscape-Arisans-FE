@@ -20,3 +20,8 @@
 </p>
 
 `Arisans` is an arisan platform that available in Android Mobile. On this early release, `Arisans` is only used as Competition Project, but the gate still open if someday we will release `Arisans` publicly.
+
+# Developer Team
+<p>
+  <img src="https://images.weserv.nl/?url=https://media-exp2.licdn.com/dms/image/C4E03AQHoZZqsfYIsXA/profile-displayphoto-shrink_400_400/0/1619342543591?e=1660780800&v=beta&t=Z5oi-h7iH82fTbR4jbcp02Mp9VA9VwxtJ3deGVTT_tc?v=4&h=100&w=100&fit=cover&mask=circle&maxage=7d"/>
+</p>  
