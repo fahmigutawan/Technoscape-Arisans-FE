@@ -23,5 +23,5 @@
 
 # Developer Team
 <p>
-  <img src="https://images.weserv.nl/?url=https://media-exp2.licdn.com/dms/image/C4E03AQHoZZqsfYIsXA/profile-displayphoto-shrink_400_400/0/1619342543591?e=1660780800&v=beta&t=Z5oi-h7iH82fTbR4jbcp02Mp9VA9VwxtJ3deGVTT_tc?v=4&h=100&w=100&fit=cover&mask=circle&maxage=7d"/>
+  <img src="https://images.weserv.nl/?url=https://media-exp2.licdn.com/dms/image/C4E03AQHoZZqsfYIsXA/profile-displayphoto-shrink_400_400/0/1619342543591?v=4&h=100&w=100&fit=cover&mask=circle&maxage=7d"/>
 </p>  
