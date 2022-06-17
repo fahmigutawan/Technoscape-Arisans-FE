@@ -13,9 +13,10 @@
   &nbsp
   &nbsp
   <img src="https://tabris.com/wp-content/uploads/2021/06/jetpack-compose-icon_RGB.png" height="128"/>
-<p align="center">Technologies we are using now</p>
+  
+  <p align="center">
+    Technologies We Are Using in FrontEnd Developing
+  </p>
 </p>
 
-<p align="center">
-  Technologies We Are Using in FrontEnd Developing
-</p>
+
