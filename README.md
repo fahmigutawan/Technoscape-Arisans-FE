@@ -19,4 +19,4 @@
   </p>
 </p>
 
-
+`Arisans` is an arisan platform that available in Android Mobile.
