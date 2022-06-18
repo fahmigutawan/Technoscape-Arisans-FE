@@ -19,19 +19,15 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.cisu.cisusplash.util.YellowDarker
 import com.fahgutawan.arisans.R
 import com.fahgutawan.arisans.myViewModel
 import com.fahgutawan.arisans.navroute.FirstNavRoute
 import com.fahgutawan.arisans.ui.theme.Typography
-import com.tahutelor.arisans.ui.theme.GrayDark
-import com.tahutelor.arisans.ui.theme.GrayLight
-import com.tahutelor.arisans.ui.theme.GrayMid
-import com.tahutelor.arisans.ui.theme.GreenDark
+import com.tahutelor.arisans.ui.theme.*
 import kotlinx.coroutines.CoroutineScope
 
 @Composable
-fun LoginPage(scope: CoroutineScope, navController: NavController,scaffoldState: ScaffoldState) {
+fun LoginPage(scope: CoroutineScope, navController: NavController, scaffoldState: ScaffoldState) {
     val height = LocalConfiguration.current.screenHeightDp
 
     Surface(color = White) {
@@ -44,7 +40,7 @@ fun LoginPage(scope: CoroutineScope, navController: NavController,scaffoldState:
             //Image vektor at top
             Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
                 Image(
-                    modifier = Modifier.size((height/3).dp),
+                    modifier = Modifier.size((height / 3).dp),
                     painter = painterResource(id = R.drawable.ic_login_vector),
                     contentDescription = "My Login"
                 )
@@ -56,7 +52,15 @@ fun LoginPage(scope: CoroutineScope, navController: NavController,scaffoldState:
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 //No Telp
-                Text(modifier = Modifier.fillMaxWidth().padding(start = 8.dp), textAlign = TextAlign.Start, text = "Nomor Telepon", color = Black, style = Typography.body2)
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 8.dp),
+                    textAlign = TextAlign.Start,
+                    text = "Nomor Telepon",
+                    color = Black,
+                    style = Typography.body2
+                )
                 OutlinedTextField(
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
                     value = myViewModel.loginTelp.value,
@@ -66,19 +70,38 @@ fun LoginPage(scope: CoroutineScope, navController: NavController,scaffoldState:
                     },
                     shape = RoundedCornerShape(CornerSize(14.dp)),
                     colors = TextFieldDefaults.outlinedTextFieldColors(
-                        focusedBorderColor = YellowDarker,
+                        focusedBorderColor = OrangeDark,
                         unfocusedBorderColor = GrayMid,
                         textColor = Black,
                         disabledTextColor = Black,
-                        backgroundColor = GrayLight
-                    )
+                        backgroundColor = GrayLight,
+                        placeholderColor = GrayMid
+                    ),
+                    placeholder = {
+                        Text(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(start = 8.dp),
+                            textAlign = TextAlign.Start,
+                            text = "Masukkan nomor telepon anda",
+                            style = Typography.body2
+                        )
+                    }
                 )
 
                 //Spacer
                 Spacer(modifier = Modifier.height(14.dp))
 
                 //Password
-                Text(modifier = Modifier.fillMaxWidth().padding(start = 8.dp), textAlign = TextAlign.Start,text = "Kata Sandi", color = Black, style = Typography.body2)
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 8.dp),
+                    textAlign = TextAlign.Start,
+                    text = "Kata Sandi",
+                    color = Black,
+                    style = Typography.body2
+                )
                 OutlinedTextField(
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                     value = myViewModel.loginPass.value,
@@ -88,13 +111,24 @@ fun LoginPage(scope: CoroutineScope, navController: NavController,scaffoldState:
                     },
                     shape = RoundedCornerShape(CornerSize(14.dp)),
                     colors = TextFieldDefaults.outlinedTextFieldColors(
-                        focusedBorderColor = YellowDarker,
+                        focusedBorderColor = OrangeDark,
                         unfocusedBorderColor = GrayMid,
                         textColor = Black,
                         disabledTextColor = Black,
-                        backgroundColor = GrayLight
+                        backgroundColor = GrayLight,
+                        placeholderColor = GrayMid
                     ),
-                    visualTransformation = PasswordVisualTransformation()
+                    visualTransformation = PasswordVisualTransformation(),
+                    placeholder = {
+                        Text(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(start = 8.dp),
+                            textAlign = TextAlign.Start,
+                            text = "Masukkan kata sandi",
+                            style = Typography.body2
+                        )
+                    }
                 )
 
                 //Spacer
@@ -102,7 +136,9 @@ fun LoginPage(scope: CoroutineScope, navController: NavController,scaffoldState:
 
                 //BTN Masuk
                 Button(
-                    modifier = Modifier.fillMaxWidth().padding(all = 8.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(all = 8.dp),
                     onClick = {
                     },
                     colors = ButtonDefaults.buttonColors(backgroundColor = GreenDark),
@@ -127,8 +163,8 @@ fun LoginPage(scope: CoroutineScope, navController: NavController,scaffoldState:
             ) {
                 Text(text = "Tidak punya akun?", style = Typography.subtitle1, color = GrayMid)
                 TextButton(onClick = {
-                    navController.navigate(FirstNavRoute.RegisterScr.route){
-                        popUpTo(FirstNavRoute.RegisterScr.route){
+                    navController.navigate(FirstNavRoute.RegisterScr.route) {
+                        popUpTo(FirstNavRoute.RegisterScr.route) {
                             inclusive = true
                         }
                     }

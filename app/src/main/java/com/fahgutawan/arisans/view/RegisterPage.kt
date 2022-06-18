@@ -15,7 +15,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.cisu.cisusplash.util.YellowDarker
 import com.fahgutawan.arisans.myViewModel
 import com.fahgutawan.arisans.navroute.FirstNavRoute
 import com.fahgutawan.arisans.ui.theme.Typography
@@ -80,12 +79,23 @@ fun RegisterPage(
                     },
                     shape = RoundedCornerShape(CornerSize(14.dp)),
                     colors = TextFieldDefaults.outlinedTextFieldColors(
-                        focusedBorderColor = YellowDarker,
+                        focusedBorderColor = OrangeDark,
                         unfocusedBorderColor = GrayMid,
                         textColor = Color.Black,
                         disabledTextColor = Color.Black,
-                        backgroundColor = GrayLight
-                    )
+                        backgroundColor = GrayLight,
+                        placeholderColor = GrayMid
+                    ),
+                    placeholder = {
+                        Text(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(start = 8.dp),
+                            textAlign = TextAlign.Start,
+                            text = "Masukkan nomor telepon anda",
+                            style = Typography.body2
+                        )
+                    }
                 )
 
                 //Spacer
@@ -110,13 +120,24 @@ fun RegisterPage(
                     },
                     shape = RoundedCornerShape(CornerSize(14.dp)),
                     colors = TextFieldDefaults.outlinedTextFieldColors(
-                        focusedBorderColor = YellowDarker,
+                        focusedBorderColor = OrangeDark,
                         unfocusedBorderColor = GrayMid,
                         textColor = Color.Black,
                         disabledTextColor = Color.Black,
-                        backgroundColor = GrayLight
+                        backgroundColor = GrayLight,
+                        placeholderColor = GrayMid
                     ),
-                    visualTransformation = PasswordVisualTransformation()
+                    visualTransformation = PasswordVisualTransformation(),
+                    placeholder = {
+                        Text(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(start = 8.dp),
+                            textAlign = TextAlign.Start,
+                            text = "Masukkan nomor telepon anda",
+                            style = Typography.body2
+                        )
+                    }
                 )
             }
 
@@ -131,8 +152,8 @@ fun RegisterPage(
                 ) {
                     Text(text = "Sudah punya akun?", style = Typography.subtitle1, color = GrayMid)
                     TextButton(onClick = {
-                        navController.navigate(FirstNavRoute.LoginScr.route){
-                            popUpTo(FirstNavRoute.LoginScr.route){
+                        navController.navigate(FirstNavRoute.LoginScr.route) {
+                            popUpTo(FirstNavRoute.LoginScr.route) {
                                 inclusive = true
                             }
                         }
@@ -142,14 +163,16 @@ fun RegisterPage(
                 }
                 //BTN Masuk
                 Button(
-                    modifier = Modifier.fillMaxWidth().padding(start = 8.dp, end = 8.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 8.dp, end = 8.dp),
                     onClick = {
                     },
                     colors = ButtonDefaults.buttonColors(backgroundColor = GreenDark),
                     shape = RoundedCornerShape(CornerSize(14.dp)),
                     contentPadding = PaddingValues(all = 14.dp)
                 ) {
-                    Text(text = "VERIFIKASI", textAlign = TextAlign.Center)
+                    Text(text = "BUAT AKUN", textAlign = TextAlign.Center)
                 }
             }
         }

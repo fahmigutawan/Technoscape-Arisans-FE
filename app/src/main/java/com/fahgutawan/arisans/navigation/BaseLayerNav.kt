@@ -7,20 +7,27 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.fahgutawan.arisans.navroute.BaseNavRoute
+import com.fahgutawan.arisans.view.HomePage
 import kotlinx.coroutines.CoroutineScope
 
 @Composable
 fun BaseLayerNav(
     scope: CoroutineScope,
     scaffoldState: ScaffoldState,
-    navController: NavHostController
+    firstLayerNavController: NavController,
+    baseNavController: NavHostController
 ) {
     NavHost(
-        navController = navController,
+        navController = baseNavController,
         startDestination = BaseNavRoute.HomePage.route
     ) {
         composable(route = BaseNavRoute.HomePage.route) {
-
+            HomePage(
+                scope = scope,
+                scaffoldState = scaffoldState,
+                firstLayerNavController = firstLayerNavController,
+                baseNavController = baseNavController
+            )
         }
         composable(route = BaseNavRoute.HistoryPage.route) {
 

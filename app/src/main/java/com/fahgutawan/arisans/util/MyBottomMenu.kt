@@ -27,16 +27,16 @@ fun MyBottomMenu(height: Dp, scope: CoroutineScope, navController: NavController
         mutableStateOf(36.dp)
     }
     val icHistorySize = remember {
-        mutableStateOf(28.dp)
+        mutableStateOf(24.dp)
     }
     val icAddSize = remember {
-        mutableStateOf(42.dp)
+        mutableStateOf(30.dp)
     }
     val icRewardSize = remember {
-        mutableStateOf(28.dp)
+        mutableStateOf(24.dp)
     }
     val icProfileSize = remember {
-        mutableStateOf(28.dp)
+        mutableStateOf(24.dp)
     }
 
     //AnimateAsDP
@@ -68,28 +68,28 @@ fun MyBottomMenu(height: Dp, scope: CoroutineScope, navController: NavController
 
     //Add
     if (myViewModel.isAddArisanSelected.value) {
-        icAddSize.value = 64.dp
+        icAddSize.value = 52.dp
         myViewModel.icAddIcon.value = R.drawable.ic_botmenu_add_selected
     } else {
-        icAddSize.value = 42.dp
+        icAddSize.value = 30.dp
         myViewModel.icAddIcon.value = R.drawable.ic_botmenu_add_unselected
     }
 
     //Reward
     if (myViewModel.isRewardSelected.value) {
-        icRewardSize.value = 36.dp
+        icRewardSize.value = 32.dp
         myViewModel.icRewardIcon.value = R.drawable.ic_botmenu_reward_selected
     } else {
-        icRewardSize.value = 28.dp
+        icRewardSize.value = 24.dp
         myViewModel.icRewardIcon.value = R.drawable.ic_botmenu_reward_unselected
     }
 
     //Profile
     if (myViewModel.isProfileSelected.value) {
-        icProfileSize.value = 36.dp
+        icProfileSize.value = 32.dp
         myViewModel.icProfileIcon.value = R.drawable.ic_botmenu_profile_selected
     } else {
-        icProfileSize.value = 28.dp
+        icProfileSize.value = 24.dp
         myViewModel.icProfileIcon.value = R.drawable.ic_botmenu_profile_unselected
     }
 
@@ -100,7 +100,7 @@ fun MyBottomMenu(height: Dp, scope: CoroutineScope, navController: NavController
         color = GrayLight
     ) {
         Row(
-            modifier = Modifier.padding(all = 16.dp),
+            modifier = Modifier.padding(all = 14.dp),
             verticalAlignment = Alignment.Bottom,
             horizontalArrangement = Arrangement.SpaceAround
         ) {
