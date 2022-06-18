@@ -8,6 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
+import com.fahgutawan.arisans.navigation.BaseLayerNav
 import com.fahgutawan.arisans.util.MyBottomMenu
 import com.tahutelor.arisans.ui.theme.White
 import kotlinx.coroutines.CoroutineScope
@@ -15,7 +16,7 @@ import kotlinx.coroutines.CoroutineScope
 @Composable
 fun BasePage(scope: CoroutineScope, scaffoldState: ScaffoldState) {
     val height = LocalConfiguration.current.screenHeightDp
-    val bottomNavBarHeight = height / 10
+    val bottomNavBarHeight = height / 8
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -30,12 +31,20 @@ fun BasePage(scope: CoroutineScope, scaffoldState: ScaffoldState) {
                     .fillMaxWidth()
                     .height((height - bottomNavBarHeight).dp),
                 color = White
-            ){
-
+            ) {
+                BaseLayerNav(
+                    scope = scope,
+                    scaffoldState = scaffoldState,
+                    navController = baseNavController
+                )
             }
 
             //Bottom navBar
-            MyBottomMenu(height = bottomNavBarHeight.dp, scope = scope, navController = baseNavController)
+            MyBottomMenu(
+                height = bottomNavBarHeight.dp,
+                scope = scope,
+                navController = baseNavController
+            )
         }
     }
 }
