@@ -21,7 +21,7 @@ fun FirstLayerNav(scope: CoroutineScope, scaffoldState: ScaffoldState) {
     val navController = rememberNavController()
     NavHost(
         navController = navController,
-        startDestination = FirstNavRoute.RegisterNextScr.route
+        startDestination = FirstNavRoute.SplashScr.route
     ) {
         composable(route = FirstNavRoute.SplashScr.route) {
             SplashScreen(scope = scope, navController = navController)

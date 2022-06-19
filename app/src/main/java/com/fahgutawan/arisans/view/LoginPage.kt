@@ -1,5 +1,6 @@
 package com.fahgutawan.arisans.view
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -8,27 +9,38 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color.Companion.Black
 import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.navigation.NavController
 import com.fahgutawan.arisans.R
+import com.fahgutawan.arisans.interfaces.LoginInterface
+import com.fahgutawan.arisans.model.LoginPost
+import com.fahgutawan.arisans.myDataStore
 import com.fahgutawan.arisans.myViewModel
 import com.fahgutawan.arisans.navroute.FirstNavRoute
+import com.fahgutawan.arisans.snackbarHostState
 import com.fahgutawan.arisans.ui.theme.Typography
 import com.tahutelor.arisans.ui.theme.*
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun LoginPage(scope: CoroutineScope, navController: NavController, scaffoldState: ScaffoldState) {
     val height = LocalConfiguration.current.screenHeightDp
+    val context = LocalContext.current.applicationContext
 
     Surface(color = White) {
         Column(
@@ -62,6 +74,7 @@ fun LoginPage(scope: CoroutineScope, navController: NavController, scaffoldState
                     style = Typography.body2
                 )
                 OutlinedTextField(
+                    modifier = Modifier.fillMaxWidth(),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
                     value = myViewModel.loginTelp.value,
                     onValueChange = {
@@ -80,8 +93,7 @@ fun LoginPage(scope: CoroutineScope, navController: NavController, scaffoldState
                     placeholder = {
                         Text(
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(start = 8.dp),
+                                .fillMaxWidth(),
                             textAlign = TextAlign.Start,
                             text = "Masukkan nomor telepon anda",
                             style = Typography.body2
@@ -95,14 +107,14 @@ fun LoginPage(scope: CoroutineScope, navController: NavController, scaffoldState
                 //Password
                 Text(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 8.dp),
+                        .fillMaxWidth(),
                     textAlign = TextAlign.Start,
                     text = "Kata Sandi",
                     color = Black,
                     style = Typography.body2
                 )
                 OutlinedTextField(
+                    modifier = Modifier.fillMaxWidth(),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                     value = myViewModel.loginPass.value,
                     onValueChange = {
@@ -138,8 +150,46 @@ fun LoginPage(scope: CoroutineScope, navController: NavController, scaffoldState
                 Button(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(all = 8.dp),
+                        .padding(top = 8.dp),
                     onClick = {
+                        if (myViewModel.loginTelp.value != ""
+                            && myViewModel.loginPass.value != ""
+                        ) {
+                            myViewModel.isLoading.value = true
+                            myViewModel.postLogin(
+                                LoginPost(
+                                    myViewModel.loginTelp.value.trim(),
+                                    myViewModel.loginPass.value.trim()
+                                ),
+                                object : LoginInterface {
+                                    override suspend fun onTokenRetrieved(token: String) {
+                                        context.myDataStore.edit {
+                                            it[stringPreferencesKey("token")] = token
+                                        }
+
+                                        //Navigate to homepage
+                                        delay(2000)
+                                        navController.navigate(FirstNavRoute.BaseScr.route) {
+                                            popUpTo(FirstNavRoute.RegisterNextScr.route) {
+                                                inclusive = true
+                                            }
+                                        }
+                                        myViewModel.loginTelp.value = ""
+                                        myViewModel.loginPass.value = ""
+
+                                        myViewModel.showSnackbar("Login berhasil, Selamat datang di Arisans")
+                                        myViewModel.isLoading.value = false
+                                    }
+
+                                    override suspend fun onFailed() {
+                                        myViewModel.isLoading.value = false
+                                        myViewModel.showSnackbar("Login gagal, coba lagi nanti!")
+                                    }
+                                }
+                            )
+                        }else{
+                            myViewModel.showSnackbar("Masukkan semua data dengan benar!")
+                        }
                     },
                     colors = ButtonDefaults.buttonColors(backgroundColor = GreenDark),
                     shape = RoundedCornerShape(CornerSize(14.dp)),

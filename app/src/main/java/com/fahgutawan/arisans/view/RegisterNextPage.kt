@@ -1,5 +1,6 @@
 package com.fahgutawan.arisans.view
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -19,21 +20,30 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import com.fahgutawan.arisans.R
+import com.fahgutawan.arisans.interfaces.RegisterInterface
+import com.fahgutawan.arisans.model.RegisterPost
+import com.fahgutawan.arisans.myDataStore
 import com.fahgutawan.arisans.myViewModel
+import com.fahgutawan.arisans.navroute.FirstNavRoute
 import com.fahgutawan.arisans.pickImageLauncher
 import com.fahgutawan.arisans.ui.theme.Typography
 import com.fahgutawan.arisans.util.MyTopBar
 import com.tahutelor.arisans.ui.theme.*
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun RegisterNextPage(
@@ -43,6 +53,7 @@ fun RegisterNextPage(
 ) {
     val height = LocalConfiguration.current.screenHeightDp
     val scaledHeight = height / 10
+    val context = LocalContext.current.applicationContext
 
     //We make this page as stack. So we should code from the lowest layer first
     Surface(modifier = Modifier.fillMaxSize(), color = White) {
@@ -101,7 +112,7 @@ fun RegisterNextPage(
                             contentScale = ContentScale.Crop
                         )
                     }
-                    
+
                     //Nama pengguna
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(
@@ -213,7 +224,53 @@ fun RegisterNextPage(
                         .fillMaxWidth()
                         .padding(start = 8.dp, end = 8.dp),
                     onClick = {
+                        if (!myViewModel.registerNextNIK.value.isEmpty()
+                            && !myViewModel.registerNextNIK.value.isEmpty()
+                            && !myViewModel.registerNextNIK.value.isEmpty()
+                        ) {
+                            myViewModel.isLoading.value = true
+                            myViewModel.postRegister(
+                                RegisterPost(
+                                    myViewModel.registerNextUsername.value,
+                                    myViewModel.registerTelp.value,
+                                    myViewModel.registerNextTTL.value,
+                                    myViewModel.registerPass.value,
+                                    myViewModel.registerNextNIK.value
+                                ),
+                                object : RegisterInterface {
+                                    override suspend fun onTokenRetrieved(token: String) {
+                                        context.myDataStore.edit {
+                                            it[stringPreferencesKey("token")] = token
+                                        }
 
+
+                                        delay(2000)
+                                        navController.navigate(FirstNavRoute.BaseScr.route) {
+                                            popUpTo(FirstNavRoute.RegisterNextScr.route) {
+                                                inclusive = true
+                                            }
+                                        }
+
+                                        //remove data from viewmodel
+                                        myViewModel.registerNextNIK.value = ""
+                                        myViewModel.registerNextTTL.value = ""
+                                        myViewModel.registerNextUsername.value = ""
+                                        myViewModel.registerTelp.value = ""
+                                        myViewModel.registerPass.value = ""
+
+                                        myViewModel.showSnackbar("Registrasi berhasil, Selamat datang di Arisans")
+                                        myViewModel.isLoading.value = false
+                                    }
+
+                                    override suspend fun onFailed() {
+                                        myViewModel.showSnackbar("Registrasi gagal, coba lagi nanti!")
+                                        myViewModel.isLoading.value = false
+                                    }
+                                }
+                            )
+                        }else{
+                            myViewModel.showSnackbar("Masukkan semua data dengan benar!")
+                        }
                     },
                     colors = ButtonDefaults.buttonColors(backgroundColor = GreenDark),
                     shape = RoundedCornerShape(CornerSize(14.dp)),

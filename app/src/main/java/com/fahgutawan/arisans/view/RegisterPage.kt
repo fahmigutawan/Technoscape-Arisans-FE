@@ -6,6 +6,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -17,9 +18,11 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.fahgutawan.arisans.myViewModel
 import com.fahgutawan.arisans.navroute.FirstNavRoute
+import com.fahgutawan.arisans.snackbarHostState
 import com.fahgutawan.arisans.ui.theme.Typography
 import com.tahutelor.arisans.ui.theme.*
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 @Composable
 fun RegisterPage(
@@ -71,6 +74,7 @@ fun RegisterPage(
                     style = Typography.body2
                 )
                 OutlinedTextField(
+                    modifier = Modifier.fillMaxWidth(),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
                     value = myViewModel.registerTelp.value,
                     onValueChange = {
@@ -112,6 +116,7 @@ fun RegisterPage(
                     style = Typography.body2
                 )
                 OutlinedTextField(
+                    modifier = Modifier.fillMaxWidth(),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                     value = myViewModel.registerPass.value,
                     onValueChange = {
@@ -163,10 +168,20 @@ fun RegisterPage(
                 }
                 //BTN Masuk
                 Button(
+
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(start = 8.dp, end = 8.dp),
                     onClick = {
+
+                        if (!myViewModel.registerTelp.value.isEmpty() && !myViewModel.registerPass.value.isEmpty()) {
+                            myViewModel.isLoading.value = true
+                            navController.navigate(FirstNavRoute.RegisterNextScr.route)
+                            myViewModel.isLoading.value = false
+                        } else {
+                            myViewModel.showSnackbar("Masukkan semua data dengan benar!")
+                        }
+
                     },
                     colors = ButtonDefaults.buttonColors(backgroundColor = GreenDark),
                     shape = RoundedCornerShape(CornerSize(14.dp)),
