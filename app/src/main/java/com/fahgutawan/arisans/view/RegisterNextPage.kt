@@ -33,7 +33,9 @@ import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import com.fahgutawan.arisans.R
 import com.fahgutawan.arisans.interfaces.RegisterInterface
+import com.fahgutawan.arisans.interfaces.UserDataInterface
 import com.fahgutawan.arisans.model.RegisterPost
+import com.fahgutawan.arisans.model.UserData
 import com.fahgutawan.arisans.myDataStore
 import com.fahgutawan.arisans.myViewModel
 import com.fahgutawan.arisans.navroute.FirstNavRoute
@@ -297,6 +299,20 @@ fun RegisterNextPage(
                                                         myViewModel.registerNextUsername.value = ""
                                                         myViewModel.registerTelp.value = ""
                                                         myViewModel.registerPass.value = ""
+
+                                                        //Loading User data
+                                                        myViewModel.userToken.value = token
+                                                        if(myViewModel.userToken.value!=""){
+                                                            myViewModel.getUserData(object :
+                                                                UserDataInterface {
+                                                                override fun onDataRetrieved(user: UserData) {
+                                                                    myViewModel.namaLengkap.value = user.body.NamaLengkap
+                                                                    myViewModel.noTelp.value = user.body.NomorTelepon
+                                                                    myViewModel.noKtp.value = user.body.NomorKTP
+                                                                    myViewModel.linkFoto.value = user.body.LinkFoto
+                                                                }
+                                                            })
+                                                        }
 
                                                         myViewModel.showSnackbar("Registrasi berhasil, Selamat datang di Arisans")
                                                         myViewModel.isLoading.value = false

@@ -1,5 +1,6 @@
 package com.fahgutawan.arisans.view
 
+import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -8,6 +9,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -21,16 +24,18 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.fahgutawan.arisans.*
 import com.fahgutawan.arisans.R
-import com.fahgutawan.arisans.coroutineScope
-import com.fahgutawan.arisans.myDataStore
-import com.fahgutawan.arisans.myViewModel
+import com.fahgutawan.arisans.model.ArisanPesertaArisan
+import com.fahgutawan.arisans.model.HomeArisanBody
 import com.fahgutawan.arisans.navroute.BaseNavRoute
 import com.fahgutawan.arisans.navroute.FirstNavRoute
 import com.fahgutawan.arisans.ui.theme.Typography
 import com.fahgutawan.arisans.util.MyTopBar
+import com.google.firebase.storage.FirebaseStorage
 import com.tahutelor.arisans.ui.theme.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
@@ -193,8 +198,8 @@ fun ProfileContent(scope:CoroutineScope,firstLayerNavController: NavController) 
                 context.myDataStore.edit {
                     it[stringPreferencesKey("token")] = "NULL"
                 }
-                myViewModel.userToken.value = ""
 
+                ResetViewModel()
                 firstLayerNavController.navigate(FirstNavRoute.LoginScr.route){
                     popUpTo(FirstNavRoute.BaseScr.route){
                         inclusive = true
@@ -239,4 +244,80 @@ fun ProfileTopBar(baseNavController: NavController) {
             )
         }
     }
+}
+
+fun ResetViewModel() {
+    myViewModel.namaLengkap.value = "..."
+    myViewModel.noTelp.value = "..."
+    myViewModel.linkFoto.value = "..."
+    myViewModel.noKtp.value = "..."
+
+    myViewModel.userPicture.value = R.drawable.ic_change_profile_background
+    myViewModel.userToken.value = ""
+    myViewModel.listArisan.clear()
+    myViewModel.isLoading.value = false
+
+
+    myViewModel.loginTelp.value = ""
+    myViewModel.loginPass.value = ""
+
+    myViewModel.registerTelp.value = ""
+    myViewModel.registerPass.value = ""
+
+    myViewModel.registerNextUsername.value = ""
+    myViewModel.registerNextTTL.value = ""
+    myViewModel.registerNextNIK.value = ""
+    myViewModel.registerNextImagePicked.value = null
+
+    myViewModel.isHomeSelected.value = false
+    myViewModel.isRiwayatSelected.value = false
+    myViewModel.isAddArisanSelected.value = false
+    myViewModel.isRewardSelected.value = false
+    myViewModel.isProfileSelected.value = false
+    myViewModel.icHomeIcon.value = (R.drawable.ic_botmenu_home_unselected)
+    myViewModel.icHistoryIcon.value = (R.drawable.ic_botmenu_history_unselected)
+    myViewModel.icAddIcon.value = (R.drawable.ic_botmenu_add_selected)
+    myViewModel.icRewardIcon.value = (R.drawable.ic_botmenu_home_unselected)
+    myViewModel.icProfileIcon.value = (R.drawable.ic_botmenu_home_unselected)
+    myViewModel.isHomeSelected.value = false
+    myViewModel.isRiwayatSelected.value = false
+    myViewModel.isAddArisanSelected.value = false
+    myViewModel.isRewardSelected.value = false
+    myViewModel.isProfileSelected.value = false
+
+    myViewModel.homeUsername.value = "..."
+    myViewModel.homeUserPhoto.value = (R.drawable.ic_home_photo_unloaded)
+    myViewModel.homeSearchValue.value = ("")
+    myViewModel.homeListOfBanner.clear()
+    myViewModel.homeIsBannerLoaded.value = (false)
+
+    myViewModel.homeIsArisanLocked.value = (true)
+    myViewModel.homeTest.value = (3)
+
+    myViewModel.landArisanTotalGet.value = "..."
+    myViewModel.landArisanSyarat.value = "..."
+    myViewModel.landArisanIsLocked.value = false
+    myViewModel.landArisanNama.value = "..."
+    myViewModel.landTotalOrang.value = "..."
+    myViewModel.landArisanUang.value = "..."
+    myViewModel.landArisanKode.value = "..."
+    myViewModel.landArisanIsAcceptTerm.value = false
+
+    myViewModel.arisanIsAdmin.value = false
+    myViewModel.arisanName.value = "..."
+    myViewModel.arisanId.value = "..."
+    myViewModel.arisanPass.value = "..."
+
+    myViewModel.addNama.value = ""
+    myViewModel.addJumlah.value = (2)
+    myViewModel.addNominal.value = ""
+    myViewModel.addStatus.value = ""
+    myViewModel.addJenisBank.value = ""
+    myViewModel.addBuktiPembayaran.value = null
+    myViewModel.addBuktiPembayaranValue.value = ""
+    myViewModel.addIsAddBerhasil.value = (false)
+
+    myViewModel.rewardNominal.value = "..."
+
+    myViewModel.arisanPicked.value = null
 }

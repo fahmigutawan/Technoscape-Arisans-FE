@@ -26,7 +26,9 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.navigation.NavController
 import com.fahgutawan.arisans.R
 import com.fahgutawan.arisans.interfaces.LoginInterface
+import com.fahgutawan.arisans.interfaces.UserDataInterface
 import com.fahgutawan.arisans.model.LoginPost
+import com.fahgutawan.arisans.model.UserData
 import com.fahgutawan.arisans.myDataStore
 import com.fahgutawan.arisans.myViewModel
 import com.fahgutawan.arisans.navroute.FirstNavRoute
@@ -178,6 +180,18 @@ fun LoginPage(scope: CoroutineScope, navController: NavController, scaffoldState
                                         myViewModel.loginTelp.value = ""
                                         myViewModel.loginPass.value = ""
 
+                                        //Loading User data
+                                        myViewModel.userToken.value = token
+                                        if(myViewModel.userToken.value!=""){
+                                            myViewModel.getUserData(object : UserDataInterface {
+                                                override fun onDataRetrieved(user: UserData) {
+                                                    myViewModel.namaLengkap.value = user.body.NamaLengkap
+                                                    myViewModel.noTelp.value = user.body.NomorTelepon
+                                                    myViewModel.noKtp.value = user.body.NomorKTP
+                                                    myViewModel.linkFoto.value = user.body.LinkFoto
+                                                }
+                                            })
+                                        }
                                         myViewModel.showSnackbar("Login berhasil, Selamat datang di Arisans")
                                         myViewModel.isLoading.value = false
                                     }
