@@ -11,24 +11,30 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fahgutawan.arisans.R
-import com.fahgutawan.arisans.interfaces.LoginInterface
-import com.fahgutawan.arisans.interfaces.RegisterInterface
-import com.fahgutawan.arisans.model.ArisanPesertaArisan
-import com.fahgutawan.arisans.model.LoginPost
-import com.fahgutawan.arisans.model.RegisterPost
-import com.fahgutawan.arisans.model.RegisterResponseModel
+import com.fahgutawan.arisans.interfaces.*
+import com.fahgutawan.arisans.model.*
+import com.fahgutawan.arisans.myViewModel
 import com.fahgutawan.arisans.repo.ArisansApiRepo
 import com.fahgutawan.arisans.snackbarHostState
+import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.launch
 import retrofit2.Response
 
 class MyViewModel(val repo: ArisansApiRepo) : ViewModel() {
+    //User info
+    val namaLengkap = mutableStateOf("...")
+    val noTelp = mutableStateOf("...")
+    val linkFoto = mutableStateOf("...")
+    val noKtp = mutableStateOf("...")
+
     //Preloaded
     val userPicture = mutableStateOf(R.drawable.ic_change_profile_background)
+    val userToken = mutableStateOf("")
+    var listArisan = mutableStateListOf<HomeArisanBody>()
 
     //MainActivity
     val isLoading = mutableStateOf(false)
-    fun showSnackbar(text:String){
+    fun showSnackbar(text: String) {
         viewModelScope.launch {
             snackbarHostState.currentSnackbarData?.dismiss()
             snackbarHostState.showSnackbar(text, duration = SnackbarDuration.Short)
@@ -50,7 +56,7 @@ class MyViewModel(val repo: ArisansApiRepo) : ViewModel() {
     val registerNextImagePicked = mutableStateOf<Uri?>(null)
 
     //Base Bottom Menu's Stuff
-    val isHomeSelected = mutableStateOf(true)
+    val isHomeSelected = mutableStateOf(false)
     val isRiwayatSelected = mutableStateOf(false)
     val isAddArisanSelected = mutableStateOf(false)
     val isRewardSelected = mutableStateOf(false)
@@ -72,9 +78,29 @@ class MyViewModel(val repo: ArisansApiRepo) : ViewModel() {
     val homeUsername = mutableStateOf(". . .")
     val homeUserPhoto = mutableStateOf(R.drawable.ic_home_photo_unloaded)
     val homeSearchValue = mutableStateOf("")
-    val homeListOfBanner = mutableStateListOf<Int>()
+    val homeListOfBanner = mutableStateListOf<Uri>()
+    val homeIsBannerLoaded = mutableStateOf(false)
+
+    //val homeListOfArisanPicked = mutableStateListOf<>()
     val homeIsArisanLocked = mutableStateOf(true)
     val homeTest = mutableStateOf(3)
+    fun loadListOfBanner() {
+        val storageRef = FirebaseStorage
+            .getInstance()
+            .getReference()
+
+        storageRef
+            .child("/banner")
+            .listAll()
+            .addOnSuccessListener {
+                it.items.forEach { ref ->
+                    ref.downloadUrl.addOnSuccessListener { uri ->
+                        homeListOfBanner.add(uri)
+                    }
+                }
+                homeIsBannerLoaded.value = true
+            }
+    }
 
     //Landing Arisan
     val landArisanTotalGet = mutableStateOf("...")
@@ -107,25 +133,94 @@ class MyViewModel(val repo: ArisansApiRepo) : ViewModel() {
     val addNominal = mutableStateOf("")
     val addStatus = mutableStateOf("")
     val addJenisBank = mutableStateOf("")
+    val addBuktiPembayaran = mutableStateOf<Uri?>(null)
+    val addBuktiPembayaranValue = mutableStateOf("")
+    val addIsAddBerhasil = mutableStateOf(false)
+
+    //Reward Attr
+    val rewardNominal = mutableStateOf("...")
+
+    //Detail arisan
+    val arisanPicked = mutableStateOf<HomeArisanBody?>(null)
 
     /**[API STUFF]*/
     fun postRegister(regData: RegisterPost, i: RegisterInterface) {
         viewModelScope.launch {
             val res = repo.postRegister(regData)
             if (res.isSuccessful) {
-                i.onTokenRetrieved(res.body()!!.body.token)
+                if(res.body()!!.success){
+                    i.onTokenRetrieved(res.body()!!.body.token)
+                }else{
+                    i.onFailed()
+                }
             } else {
                 i.onFailed()
             }
         }
     }
-
     fun postLogin(loginData: LoginPost, i: LoginInterface) {
         viewModelScope.launch {
             val res = repo.postLogin(loginData)
             if (res.isSuccessful) {
-                i.onTokenRetrieved(res.body()!!.body.token)
+                if(res.body()!!.success){
+                    i.onTokenRetrieved(res.body()!!.body.token)
+                }else{
+                    i.onFailed()
+                }
             } else {
+                i.onFailed()
+            }
+        }
+    }
+    fun postNewArisan(newArisan: NewArisan, i:NewArisanInterface){
+        viewModelScope.launch {
+            val res = repo.postNewArisan(newArisan)
+            if(res.isSuccessful){
+                i.onArisanAdded()
+            }else{
+                i.onFailed()
+            }
+
+            Log.e("ASDASD", res.toString())
+        }
+    }
+    fun getUserData(i:UserDataInterface){
+        viewModelScope.launch {
+            val res = repo.getUserData()
+
+            if(res.isSuccessful){
+                i.onDataRetrieved(res.body()!!)
+            }
+        }
+    }
+    fun getListArisan(){
+        viewModelScope.launch {
+            val res = repo.getListArisan()
+
+            if(res.isSuccessful){
+                if(res.body()!!.success){
+                    res.body()!!.body.forEach { arisanBody ->
+                        listArisan.add(arisanBody)
+                    }
+                }else{
+
+                }
+            }else{
+
+            }
+        }
+    }
+    fun getDetailArisan(ID:Int, i:DetailArisanInterface){
+        viewModelScope.launch {
+            val res = repo.getDetailArisan(ID)
+
+            if(res.isSuccessful){
+                if(res.body()!!.success){
+                    i.onArisanRetrieved(ID)
+                }else{
+                    i.onFailed()
+                }
+            }else{
                 i.onFailed()
             }
         }

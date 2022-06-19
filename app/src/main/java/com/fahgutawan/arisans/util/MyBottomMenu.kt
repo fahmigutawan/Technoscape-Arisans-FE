@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.fahgutawan.arisans.R
 import com.fahgutawan.arisans.myViewModel
+import com.fahgutawan.arisans.navroute.BaseNavRoute
 import com.fahgutawan.arisans.navroute.FirstNavRoute
 import com.tahutelor.arisans.ui.theme.GrayLight
 import kotlinx.coroutines.CoroutineScope
@@ -111,8 +112,11 @@ fun MyBottomMenu(
             horizontalArrangement = Arrangement.SpaceAround
         ) {
             IconButton(onClick = {
-                myViewModel.resetBotMenuSelectState()
-                myViewModel.isHomeSelected.value = true
+                navController.navigate(BaseNavRoute.HomePage.route){
+                    popUpTo(BaseNavRoute.HomePage.route){
+                        inclusive = true
+                    }
+                }
             }) {
                 Icon(
                     modifier = Modifier.size(icAnimatedHome.value),
@@ -122,8 +126,11 @@ fun MyBottomMenu(
                 )
             }
             IconButton(onClick = {
-                myViewModel.resetBotMenuSelectState()
-                myViewModel.isRiwayatSelected.value = true
+                navController.navigate(BaseNavRoute.HistoryPage.route){
+                    popUpTo(BaseNavRoute.HistoryPage.route){
+                        inclusive = true
+                    }
+                }
             }) {
                 Icon(
                     modifier = Modifier.size(icAnimatedHistory.value),
@@ -143,8 +150,11 @@ fun MyBottomMenu(
                 )
             }
             IconButton(onClick = {
-                myViewModel.resetBotMenuSelectState()
-                myViewModel.isRewardSelected.value = true
+                navController.navigate(BaseNavRoute.RewardPage.route){
+                    popUpTo(BaseNavRoute.RewardPage.route){
+                        inclusive = true
+                    }
+                }
             }) {
                 Icon(
                     modifier = Modifier.size(icAnimatedReward.value),
@@ -154,8 +164,11 @@ fun MyBottomMenu(
                 )
             }
             IconButton(onClick = {
-                myViewModel.resetBotMenuSelectState()
-                myViewModel.isProfileSelected.value = true
+                navController.navigate(BaseNavRoute.ProfilePage.route){
+                    popUpTo(BaseNavRoute.ProfilePage.route){
+                        inclusive = true
+                    }
+                }
             }) {
                 Icon(
                     modifier = Modifier.size(icAnimatedProfile.value),

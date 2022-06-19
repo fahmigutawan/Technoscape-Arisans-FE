@@ -5,5 +5,6 @@ data class RegisterPost(
     val nomor_telepon: String,
     val tanggal_lahir: String,
     val password: String,
-    val nomor_ktp: String
+    val nomor_ktp: String,
+    val link_foto:String
 )

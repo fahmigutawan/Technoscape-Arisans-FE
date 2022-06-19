@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -30,28 +31,46 @@ import androidx.compose.ui.unit.sp
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.navigation.NavController
+import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import com.fahgutawan.arisans.R
 import com.fahgutawan.arisans.interfaces.LoginInterface
+import com.fahgutawan.arisans.interfaces.NewArisanInterface
 import com.fahgutawan.arisans.model.LoginPost
 import com.fahgutawan.arisans.model.MetodeBayarMap
+import com.fahgutawan.arisans.model.NewArisan
 import com.fahgutawan.arisans.myDataStore
 import com.fahgutawan.arisans.myViewModel
+import com.fahgutawan.arisans.navroute.BaseNavRoute
 import com.fahgutawan.arisans.navroute.FirstNavRoute
+import com.fahgutawan.arisans.pickBuktiLauncher
 import com.fahgutawan.arisans.ui.theme.Typography
+import com.fahgutawan.arisans.util.MySuccessTransfer
 import com.fahgutawan.arisans.util.MyTopBar
 import com.tahutelor.arisans.ui.theme.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 
 @Composable
-fun AddArisanPage(scope:CoroutineScope, scaffoldState: ScaffoldState, navController: NavController) {
-    AddContent()
+fun AddArisanPage(
+    scope: CoroutineScope,
+    scaffoldState: ScaffoldState,
+    navController: NavController
+) {
+    AddContent(navController)
     AddTopBar()
+
+    if (myViewModel.addIsAddBerhasil.value) {
+        Surface(color = GrayMid, modifier = Modifier.fillMaxSize()) {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Center){
+                MySuccessTransfer()
+            }
+        }
+    }
 }
 
 @Composable
-fun AddContent() {
+fun AddContent(navController: NavController) {
     val height = LocalConfiguration.current.screenHeightDp
     val scaledHeight = height / 10
     var scrollState = rememberScrollState()
@@ -119,7 +138,7 @@ fun AddContent() {
             var expandIcon = R.drawable.ic_expand_open
             if (expanded.value) expandIcon = R.drawable.ic_expand_close else expandIcon =
                 R.drawable.ic_expand_open
-            val jumlah = listOf(2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15)
+            val jumlah = listOf(5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15)
             val width = LocalConfiguration.current.screenWidthDp
             Column(modifier = Modifier.fillMaxWidth()) {
                 OutlinedTextField(
@@ -268,7 +287,7 @@ fun AddContent() {
                         .width((width - 32).dp)
                         .background(color = GrayLight),
                     expanded = isStatusExpanded.value,
-                    onDismissRequest = { expanded.value = false }
+                    onDismissRequest = { isStatusExpanded.value = false }
                 ) {
                     status.forEach { item ->
                         DropdownMenuItem(onClick = {
@@ -407,6 +426,75 @@ fun AddContent() {
                 }
             }
 
+            //UPLOAD GAMBAR
+            Spacer(modifier = Modifier.height(32.dp))
+            Text(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 8.dp),
+                textAlign = TextAlign.Start,
+                text = "Bukti Pembayaran",
+                color = Color.Black,
+                style = Typography.body2,
+                fontSize = 24.sp
+            )
+            val bukti = R.drawable.ic_nophoto
+            val buktiHeight = (width / 3).dp
+
+            Spacer(modifier = Modifier.height(0.dp))
+            if (myViewModel.addBuktiPembayaran.value != null) {
+                AsyncImage(
+                    modifier = Modifier.height(buktiHeight),
+                    model = myViewModel.addBuktiPembayaran.value,
+                    contentDescription = "BUKTI"
+                )
+            } else {
+                AsyncImage(
+                    modifier = Modifier.height(buktiHeight),
+                    model = bukti,
+                    contentDescription = "BUKTI"
+                )
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+            Column(modifier = Modifier.fillMaxWidth()) {
+                OutlinedTextField(
+                    readOnly = true,
+                    modifier = Modifier.fillMaxWidth(),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    value = myViewModel.addBuktiPembayaranValue.value,
+                    onValueChange = { myViewModel.addBuktiPembayaranValue.value },
+                    shape = RoundedCornerShape(CornerSize(14.dp)),
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        focusedBorderColor = OrangeDark,
+                        unfocusedBorderColor = GrayMid,
+                        textColor = Color.Black,
+                        disabledTextColor = Color.Black,
+                        backgroundColor = GrayLight,
+                        placeholderColor = GrayMid
+                    ),
+                    placeholder = {
+                        Text(
+                            text = "Upload bukti pembayaran",
+                            style = Typography.subtitle2
+                        )
+                    },
+                    trailingIcon = {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_camera),
+                            "contentDescription",
+                            modifier = Modifier.clickable {
+                                pickBuktiLauncher.launch("image/*")
+
+                                if (myViewModel.addBuktiPembayaran.value != null) {
+                                    myViewModel.addBuktiPembayaranValue.value = "Gambar Terpilih"
+                                }
+                            },
+                            tint = Color.Black
+                        )
+                    }
+                )
+            }
+
             //BUTTON
             Spacer(modifier = Modifier.height(16.dp))
             Button(
@@ -414,9 +502,32 @@ fun AddContent() {
                     .fillMaxWidth()
                     .padding(top = 8.dp),
                 onClick = {
-                    if (isFilledAll()){
-                        /** DO SMTH HERE*/
-                    }else{
+                    if (isFilledAll()) {
+                        myViewModel.postNewArisan(
+                            NewArisan(
+                                myViewModel.addJumlah.value,
+                                Integer.parseInt(myViewModel.addNominal.value),
+                                if (myViewModel.addStatus.value.equals("Publik")) true else false,
+                                myViewModel.addNama.value
+                            ), object : NewArisanInterface {
+                                override suspend fun onArisanAdded() {
+                                    myViewModel.addIsAddBerhasil.value = true
+                                    delay(1000)
+                                    myViewModel.addIsAddBerhasil.value = false
+                                    myViewModel.showSnackbar("Arisan Berhasil Dibuat")
+                                    navController.navigate(FirstNavRoute.BaseScr.route) {
+                                        popUpTo(FirstNavRoute.AddArisanScr.route) {
+                                            inclusive = true
+                                        }
+                                    }
+                                }
+
+                                override suspend fun onFailed() {
+                                    myViewModel.showSnackbar("Gagal diproses, coba lagi nanti!")
+                                }
+                            }
+                        )
+                    } else {
                         myViewModel.showSnackbar("Harap isi semua data!")
                     }
                 },
@@ -467,6 +578,7 @@ fun isFilledAll(): Boolean {
         && myViewModel.addJenisBank.value != ""
         && myViewModel.addNama.value != ""
         && myViewModel.addNominal.value != ""
+        && myViewModel.addBuktiPembayaran.value != null
     ) return true
 
     return false

@@ -94,8 +94,7 @@ fun RegisterPage(
                     placeholder = {
                         Text(
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(start = 8.dp),
+                                .fillMaxWidth(),
                             textAlign = TextAlign.Start,
                             text = "Masukkan nomor telepon anda",
                             style = Typography.body2
@@ -109,8 +108,7 @@ fun RegisterPage(
                 //Password
                 Text(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 8.dp),
+                        .fillMaxWidth(),
                     textAlign = TextAlign.Start,
                     text = "Kata Sandi",
                     color = Color.Black,
@@ -137,8 +135,7 @@ fun RegisterPage(
                     placeholder = {
                         Text(
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(start = 8.dp),
+                                .fillMaxWidth(),
                             textAlign = TextAlign.Start,
                             text = "Masukkan nomor telepon anda",
                             style = Typography.body2

@@ -17,14 +17,17 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.fahgutawan.arisans.R
+import com.fahgutawan.arisans.model.HomeArisanBody
 import com.fahgutawan.arisans.myViewModel
+import com.fahgutawan.arisans.navroute.FirstNavRoute
 import com.fahgutawan.arisans.ui.theme.Typography
 import com.tahutelor.arisans.ui.theme.*
 
 @Composable
-fun ArisanPage() {
+fun ArisanPage(firstNavController: NavController, arisan: HomeArisanBody) {
     val height = LocalConfiguration.current.screenHeightDp
     val scaledHeight = height / 3
     Surface(modifier = Modifier.fillMaxSize(), color = White) {
@@ -72,7 +75,11 @@ fun ArisanPage() {
                             modifier = Modifier.fillMaxWidth(),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            IconButton(onClick = { /*TODO*/ }) {
+                            IconButton(onClick = {
+                                firstNavController.popBackStack(
+                                    route = FirstNavRoute.DetailArisan.route, inclusive = true
+                                )
+                            }) {
                                 Icon(
                                     painter = painterResource(id = R.drawable.ic_registernext_back),
                                     contentDescription = "Arisan name",
@@ -81,7 +88,7 @@ fun ArisanPage() {
 
                             }
                             Text(
-                                text = myViewModel.arisanName.value,
+                                text = arisan.NamaArisan,
                                 style = Typography.h2,
                                 color = White
                             )
@@ -93,12 +100,12 @@ fun ArisanPage() {
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             Text(
-                                text = myViewModel.arisanId.value,
+                                text = arisan.ID.toString(),
                                 style = Typography.body2,
                                 color = White
                             )
                             Text(
-                                text = "Pass = ${myViewModel.arisanPass.value}",
+                                text = "Pass = ${arisan.NanoIdArisan}",
                                 style = Typography.body2,
                                 color = White
                             )
@@ -127,7 +134,7 @@ fun ArisanPage() {
                             color = GrayDark
                         )
                         Text(
-                            text = "Rp 200.000 / Rp 400.000",
+                            text = "Rp 200.000 / Rp ${arisan.Nominal}",
                             style = Typography.subtitle2,
                             color = OrangeDark
                         )
@@ -144,7 +151,7 @@ fun ArisanPage() {
                     color = GrayDark
                 )
                 //ListItem
-                for (i in 0..myViewModel.arisanPesertaArisan.size - 1) {
+                for (i in 0..5) {
                     Surface(
                         modifier = Modifier
                             .fillMaxWidth()

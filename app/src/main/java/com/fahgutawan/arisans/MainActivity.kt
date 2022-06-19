@@ -25,6 +25,8 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.fahgutawan.arisans.interfaces.UserDataInterface
+import com.fahgutawan.arisans.model.UserData
 import com.fahgutawan.arisans.navigation.FirstLayerNav
 import com.fahgutawan.arisans.repo.ArisansApiRepo
 import com.fahgutawan.arisans.ui.theme.ArisansTheme
@@ -34,12 +36,16 @@ import com.fahgutawan.arisans.viewmodel.MyViewModelFactory
 import com.tahutelor.arisans.ui.theme.GrayDark
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 //Instanciating viewmodel
 val Context.myDataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 lateinit var myViewModel: MyViewModel
 lateinit var pickImageLauncher: ActivityResultLauncher<String>
+lateinit var pickBuktiLauncher: ActivityResultLauncher<String>
 lateinit var snackbarHostState: SnackbarHostState
 lateinit var coroutineScope: CoroutineScope
 
@@ -48,7 +54,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        //Component start here
+        //ViewModel Stuff
         val repo = ArisansApiRepo()
         val factory = MyViewModelFactory(repo)
         myViewModel = ViewModelProvider(this, factory).get(MyViewModel::class.java)
@@ -58,7 +64,17 @@ class MainActivity : ComponentActivity() {
             registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
                 if (uri != null) myViewModel.registerNextImagePicked.value = uri
             }
+        pickBuktiLauncher =
+            registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+                if (uri != null) myViewModel.addBuktiPembayaran.value = uri
+            }
 
+        //LoadToken
+        val tokenFLow: Flow<String> = myDataStore.data.map {
+            it[stringPreferencesKey("token")] ?: "NULL"
+        }
+
+        //Component start here
         setContent {
             ArisansTheme {
 
@@ -69,6 +85,11 @@ class MainActivity : ComponentActivity() {
                     val scaffoldState = rememberScaffoldState()
                     snackbarHostState = scaffoldState.snackbarHostState
                     coroutineScope = rememberCoroutineScope()
+
+                    coroutineScope.launch {
+                        myViewModel.userToken.value = tokenFLow.first()
+                    }
+
                     Scaffold(scaffoldState = scaffoldState) {
                         Surface(modifier = Modifier.fillMaxSize()) {
                             FirstLayerNav(

@@ -7,6 +7,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.fahgutawan.arisans.myViewModel
 import com.fahgutawan.arisans.navroute.FirstNavRoute
 import com.fahgutawan.arisans.view.*
 import com.tahutelor.arisans.view.SplashScreen
@@ -49,6 +50,9 @@ fun FirstLayerNav(scope: CoroutineScope, scaffoldState: ScaffoldState) {
         }
         composable(route = FirstNavRoute.AddArisanScr.route) {
             AddArisanPage(scope, scaffoldState, navController)
+        }
+        composable(route = FirstNavRoute.DetailArisan.route) {
+            ArisanPage(navController, myViewModel.arisanPicked.value!!)
         }
     }
 }

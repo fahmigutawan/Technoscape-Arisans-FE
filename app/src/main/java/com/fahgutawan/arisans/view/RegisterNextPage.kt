@@ -40,6 +40,7 @@ import com.fahgutawan.arisans.navroute.FirstNavRoute
 import com.fahgutawan.arisans.pickImageLauncher
 import com.fahgutawan.arisans.ui.theme.Typography
 import com.fahgutawan.arisans.util.MyTopBar
+import com.google.firebase.storage.FirebaseStorage
 import com.tahutelor.arisans.ui.theme.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
@@ -256,47 +257,61 @@ fun RegisterNextPage(
                         if (!myViewModel.registerNextNIK.value.isEmpty()
                             && !myViewModel.registerNextNIK.value.isEmpty()
                             && !myViewModel.registerNextNIK.value.isEmpty()
+                            && myViewModel.registerNextImagePicked != null
                         ) {
                             myViewModel.isLoading.value = true
-                            myViewModel.postRegister(
-                                RegisterPost(
-                                    myViewModel.registerNextUsername.value,
-                                    myViewModel.registerTelp.value,
-                                    myViewModel.registerNextTTL.value,
-                                    myViewModel.registerPass.value,
-                                    myViewModel.registerNextNIK.value
-                                ),
-                                object : RegisterInterface {
-                                    override suspend fun onTokenRetrieved(token: String) {
-                                        context.myDataStore.edit {
-                                            it[stringPreferencesKey("token")] = token
+                            val ref = FirebaseStorage.getInstance()
+                            ref.getReference()
+                                .child("profile_picture/${myViewModel.registerTelp.value}.jpg")
+                                .putFile(
+                                    myViewModel.registerNextImagePicked.value!!
+                                ).addOnSuccessListener {
+                                    ref.getReference()
+                                        .child("profile_picture/${myViewModel.registerTelp.value}.jpg")
+                                        .downloadUrl
+                                        .addOnSuccessListener {
+                                            myViewModel.postRegister(
+                                                RegisterPost(
+                                                    myViewModel.registerNextUsername.value,
+                                                    myViewModel.registerTelp.value,
+                                                    myViewModel.registerNextTTL.value,
+                                                    myViewModel.registerPass.value,
+                                                    myViewModel.registerNextNIK.value,
+                                                    it.toString()
+                                                    ),
+                                                object : RegisterInterface {
+                                                    override suspend fun onTokenRetrieved(token: String) {
+                                                        context.myDataStore.edit {
+                                                            it[stringPreferencesKey("token")] = token
+                                                        }
+                                                        delay(2000)
+                                                        navController.navigate(FirstNavRoute.BaseScr.route) {
+                                                            popUpTo(FirstNavRoute.RegisterNextScr.route) {
+                                                                inclusive = true
+                                                            }
+                                                        }
+
+                                                        //remove data from viewmodel
+                                                        myViewModel.registerNextNIK.value = ""
+                                                        myViewModel.registerNextTTL.value = ""
+                                                        myViewModel.registerNextUsername.value = ""
+                                                        myViewModel.registerTelp.value = ""
+                                                        myViewModel.registerPass.value = ""
+
+                                                        myViewModel.showSnackbar("Registrasi berhasil, Selamat datang di Arisans")
+                                                        myViewModel.isLoading.value = false
+                                                    }
+
+                                                    override suspend fun onFailed() {
+                                                        myViewModel.showSnackbar("Registrasi gagal, coba lagi nanti!")
+                                                        myViewModel.isLoading.value = false
+                                                    }
+                                                }
+                                            )
                                         }
-
-
-                                        delay(2000)
-                                        navController.navigate(FirstNavRoute.BaseScr.route) {
-                                            popUpTo(FirstNavRoute.RegisterNextScr.route) {
-                                                inclusive = true
-                                            }
-                                        }
-
-                                        //remove data from viewmodel
-                                        myViewModel.registerNextNIK.value = ""
-                                        myViewModel.registerNextTTL.value = ""
-                                        myViewModel.registerNextUsername.value = ""
-                                        myViewModel.registerTelp.value = ""
-                                        myViewModel.registerPass.value = ""
-
-                                        myViewModel.showSnackbar("Registrasi berhasil, Selamat datang di Arisans")
-                                        myViewModel.isLoading.value = false
-                                    }
-
-                                    override suspend fun onFailed() {
-                                        myViewModel.showSnackbar("Registrasi gagal, coba lagi nanti!")
-                                        myViewModel.isLoading.value = false
-                                    }
                                 }
-                            )
+
+
                         } else {
                             myViewModel.showSnackbar("Masukkan semua data dengan benar!")
                         }
@@ -318,7 +333,7 @@ fun RegisterNextPage(
         ) {
             IconButton(
                 onClick = {
-
+                    navController.popBackStack(route = FirstNavRoute.RegisterNextScr.route, inclusive = true)
                 }
             ) {
                 Icon(
