@@ -17,11 +17,17 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.fahgutawan.arisans.R
 import com.fahgutawan.arisans.myViewModel
+import com.fahgutawan.arisans.navroute.FirstNavRoute
 import com.tahutelor.arisans.ui.theme.GrayLight
 import kotlinx.coroutines.CoroutineScope
 
 @Composable
-fun MyBottomMenu(height: Dp, scope: CoroutineScope, navController: NavController) {
+fun MyBottomMenu(
+    height: Dp,
+    scope: CoroutineScope,
+    firstNavController: NavController,
+    navController: NavController
+) {
     //Default Sizes
     val icHomeSize = remember {
         mutableStateOf(36.dp)
@@ -30,7 +36,7 @@ fun MyBottomMenu(height: Dp, scope: CoroutineScope, navController: NavController
         mutableStateOf(24.dp)
     }
     val icAddSize = remember {
-        mutableStateOf(30.dp)
+        mutableStateOf(52.dp)
     }
     val icRewardSize = remember {
         mutableStateOf(24.dp)
@@ -67,13 +73,13 @@ fun MyBottomMenu(height: Dp, scope: CoroutineScope, navController: NavController
     }
 
     //Add
-    if (myViewModel.isAddArisanSelected.value) {
-        icAddSize.value = 52.dp
-        myViewModel.icAddIcon.value = R.drawable.ic_botmenu_add_selected
-    } else {
-        icAddSize.value = 30.dp
-        myViewModel.icAddIcon.value = R.drawable.ic_botmenu_add_unselected
-    }
+//    if (myViewModel.isAddArisanSelected.value) {
+//        icAddSize.value = 52.dp
+//        myViewModel.icAddIcon.value = R.drawable.ic_botmenu_add_selected
+//    } else {
+//        icAddSize.value = 30.dp
+//        myViewModel.icAddIcon.value = R.drawable.ic_botmenu_add_unselected
+//    }
 
     //Reward
     if (myViewModel.isRewardSelected.value) {
@@ -127,8 +133,7 @@ fun MyBottomMenu(height: Dp, scope: CoroutineScope, navController: NavController
                 )
             }
             IconButton(onClick = {
-                myViewModel.resetBotMenuSelectState()
-                myViewModel.isAddArisanSelected.value = true
+                firstNavController.navigate(FirstNavRoute.AddArisanScr.route)
             }) {
                 Icon(
                     modifier = Modifier.size(icAnimatedAdd.value),

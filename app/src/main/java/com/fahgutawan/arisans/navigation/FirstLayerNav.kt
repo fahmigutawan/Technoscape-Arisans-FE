@@ -8,10 +8,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.fahgutawan.arisans.navroute.FirstNavRoute
-import com.fahgutawan.arisans.view.BasePage
-import com.fahgutawan.arisans.view.LoginPage
-import com.fahgutawan.arisans.view.RegisterNextPage
-import com.fahgutawan.arisans.view.RegisterPage
+import com.fahgutawan.arisans.view.*
 import com.tahutelor.arisans.view.SplashScreen
 import kotlinx.coroutines.CoroutineScope
 
@@ -49,6 +46,9 @@ fun FirstLayerNav(scope: CoroutineScope, scaffoldState: ScaffoldState) {
                 scaffoldState = scaffoldState,
                 firstLayerNavController = navController
             )
+        }
+        composable(route = FirstNavRoute.AddArisanScr.route) {
+            AddArisanPage(scope, scaffoldState, navController)
         }
     }
 }

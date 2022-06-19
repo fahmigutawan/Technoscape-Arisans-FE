@@ -23,6 +23,9 @@ import kotlinx.coroutines.launch
 import retrofit2.Response
 
 class MyViewModel(val repo: ArisansApiRepo) : ViewModel() {
+    //Preloaded
+    val userPicture = mutableStateOf(R.drawable.ic_change_profile_background)
+
     //MainActivity
     val isLoading = mutableStateOf(false)
     fun showSnackbar(text:String){
@@ -70,13 +73,8 @@ class MyViewModel(val repo: ArisansApiRepo) : ViewModel() {
     val homeUserPhoto = mutableStateOf(R.drawable.ic_home_photo_unloaded)
     val homeSearchValue = mutableStateOf("")
     val homeListOfBanner = mutableStateListOf<Int>()
-    val homeIsRandomLoaded = mutableStateOf(false)
-    val homeIsArisanLocked = mutableStateOf(false)
-    fun loadUserPhoto() {
-        viewModelScope.launch {
-
-        }
-    }
+    val homeIsArisanLocked = mutableStateOf(true)
+    val homeTest = mutableStateOf(3)
 
     //Landing Arisan
     val landArisanTotalGet = mutableStateOf("...")
@@ -108,6 +106,7 @@ class MyViewModel(val repo: ArisansApiRepo) : ViewModel() {
     val addJumlah = mutableStateOf(2)
     val addNominal = mutableStateOf("")
     val addStatus = mutableStateOf("")
+    val addJenisBank = mutableStateOf("")
 
     /**[API STUFF]*/
     fun postRegister(regData: RegisterPost, i: RegisterInterface) {

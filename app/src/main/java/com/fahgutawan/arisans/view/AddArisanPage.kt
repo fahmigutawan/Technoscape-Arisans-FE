@@ -5,15 +5,18 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement.SpaceBetween
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
@@ -24,14 +27,25 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.navigation.NavController
+import coil.compose.rememberAsyncImagePainter
 import com.fahgutawan.arisans.R
+import com.fahgutawan.arisans.interfaces.LoginInterface
+import com.fahgutawan.arisans.model.LoginPost
+import com.fahgutawan.arisans.model.MetodeBayarMap
+import com.fahgutawan.arisans.myDataStore
 import com.fahgutawan.arisans.myViewModel
+import com.fahgutawan.arisans.navroute.FirstNavRoute
 import com.fahgutawan.arisans.ui.theme.Typography
 import com.fahgutawan.arisans.util.MyTopBar
 import com.tahutelor.arisans.ui.theme.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
 
 @Composable
-fun AddArisanPage() {
+fun AddArisanPage(scope:CoroutineScope, scaffoldState: ScaffoldState, navController: NavController) {
     AddContent()
     AddTopBar()
 }
@@ -46,7 +60,7 @@ fun AddContent() {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .scrollable(state = scrollState, orientation = Orientation.Vertical)
+                .verticalScroll(state = scrollState)
                 .padding(start = 16.dp, end = 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -202,7 +216,7 @@ fun AddContent() {
                     .fillMaxWidth()
                     .padding(start = 8.dp),
                 textAlign = TextAlign.Start,
-                text = "Jumlah Anggota",
+                text = "Status Arisan",
                 color = Color.Black,
                 style = Typography.body2
             )
@@ -283,36 +297,138 @@ fun AddContent() {
                     .fillMaxWidth()
                     .padding(start = 8.dp),
                 textAlign = TextAlign.Start,
-                text = "Pembayaran Pembuatan",
+                text = "Pembayaran Pembuatan Kelompok Arisan Anggota ${myViewModel.addJumlah.value} Orang Total Tagihan",
                 color = Color.Black,
                 style = Typography.body1
             )
+            Text(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 8.dp),
+                textAlign = TextAlign.Start,
+                text = "Rp ${myViewModel.addNominal.value}",
+                color = OrangeDark,
+                style = Typography.h1,
+                fontSize = 18.sp
+            )
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 8.dp),
-                    textAlign = TextAlign.Start,
-                    text = "Kelompok Arisan Anggota ${myViewModel.addJumlah} Orang\nTotal Tagihan",
-                    color = Color.Black,
-                    style = Typography.body1
-                )
+            //METODE PEMBAYARAN
+            Spacer(modifier = Modifier.height(32.dp))
+            Text(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 8.dp),
+                textAlign = TextAlign.Start,
+                text = "Pilih Metode Pembayaran",
+                color = Color.Black,
+                style = Typography.body2,
+                fontSize = 24.sp
+            )
 
-                Text(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 8.dp),
-                    textAlign = TextAlign.Start,
-                    text = "Rp ${myViewModel.addNominal}",
-                    color = OrangeDark,
-                    style = Typography.body1
+            val isMetodeBayarExpanded = remember { mutableStateOf(false) }
+            val listMetodeBayar = listOf(
+                MetodeBayarMap(
+                    "https://play-lh.googleusercontent.com/ZY7pvdVzvq6yEnvW0G15mRGCFm5OGkIk-czbG2RW6LAppo0dY54fZOBbM9OOo38t97qN",
+                    "OVO"
+                ),
+                MetodeBayarMap(
+                    "https://rvpulsa.com/images/produk/go_pay/gopay-247-pizh.png",
+                    "GoPay"
+                ),
+                MetodeBayarMap(
+                    "https://play-lh.googleusercontent.com/pqoyI2JaPd3uOYt-5GzVqi82OvhBC9Jf-EPQqPDhCbyekdKZe5r-hOGlF4qE1ddWe3o",
+                    "Dana"
                 )
+            )
+            var metodePembayaranIcon = R.drawable.ic_expand_open
+            if (isMetodeBayarExpanded.value) metodePembayaranIcon =
+                R.drawable.ic_expand_close else metodePembayaranIcon =
+                R.drawable.ic_expand_open
+            Column(modifier = Modifier.fillMaxWidth()) {
+                OutlinedTextField(
+                    readOnly = true,
+                    modifier = Modifier.fillMaxWidth(),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    value = myViewModel.addJenisBank.value,
+                    onValueChange = { myViewModel.addJenisBank.value },
+                    shape = RoundedCornerShape(CornerSize(14.dp)),
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        focusedBorderColor = OrangeDark,
+                        unfocusedBorderColor = GrayMid,
+                        textColor = Color.Black,
+                        disabledTextColor = Color.Black,
+                        backgroundColor = GrayLight,
+                        placeholderColor = GrayMid
+                    ),
+                    placeholder = {
+                        Text(
+                            text = "Pilih metode pembayaran",
+                            style = Typography.subtitle2
+                        )
+                    },
+                    trailingIcon = {
+                        Icon(
+                            painter = painterResource(id = metodePembayaranIcon),
+                            "contentDescription",
+                            modifier = Modifier.clickable {
+                                isMetodeBayarExpanded.value = !isMetodeBayarExpanded.value
+                            },
+                            tint = Color.Black
+                        )
+                    }
+                )
+                //Dropdown
+                DropdownMenu(
+                    modifier = Modifier
+                        .width((width - 32).dp)
+                        .background(color = GrayLight),
+                    expanded = isMetodeBayarExpanded.value,
+                    onDismissRequest = { isMetodeBayarExpanded.value = false }
+                ) {
+                    listMetodeBayar.forEach { item ->
+                        DropdownMenuItem(onClick = {
+                            myViewModel.addJenisBank.value = item.nama
+                            isMetodeBayarExpanded.value = false
+                        }) {
+                            Row(
+                                modifier = Modifier.width((width - 32).dp),
+                                verticalAlignment = CenterVertically,
+                                horizontalArrangement = SpaceBetween
+                            ) {
+                                Icon(
+                                    painter = rememberAsyncImagePainter(model = item.url),
+                                    contentDescription = item.nama,
+                                    tint = Color.Unspecified
+                                )
+                                Text(text = item.nama, color = GrayDark)
+                            }
+                        }
+                    }
+                }
             }
+
+            //BUTTON
+            Spacer(modifier = Modifier.height(16.dp))
+            Button(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp),
+                onClick = {
+                    if (isFilledAll()){
+                        /** DO SMTH HERE*/
+                    }else{
+                        myViewModel.showSnackbar("Harap isi semua data!")
+                    }
+                },
+                colors = ButtonDefaults.buttonColors(backgroundColor = GreenDark),
+                shape = RoundedCornerShape(CornerSize(14.dp)),
+                contentPadding = PaddingValues(all = 14.dp)
+            ) {
+                Text(text = "LAKUKAN PEMBAYARAN", textAlign = TextAlign.Center, color = White)
+            }
+
+            //Spacer
+            Spacer(modifier = Modifier.height(32.dp))
         }
     }
 }
@@ -344,4 +460,14 @@ fun AddTopBar() {
             )
         }
     }
+}
+
+fun isFilledAll(): Boolean {
+    if (myViewModel.addStatus.value != ""
+        && myViewModel.addJenisBank.value != ""
+        && myViewModel.addNama.value != ""
+        && myViewModel.addNominal.value != ""
+    ) return true
+
+    return false
 }

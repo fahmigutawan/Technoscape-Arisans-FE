@@ -1,10 +1,7 @@
 package com.fahgutawan.arisans.repo
 
 import com.fahgutawan.arisans.api.RetrofitInstance
-import com.fahgutawan.arisans.model.LoginPost
-import com.fahgutawan.arisans.model.LoginResponseModel
-import com.fahgutawan.arisans.model.RegisterPost
-import com.fahgutawan.arisans.model.RegisterResponseModel
+import com.fahgutawan.arisans.model.*
 import retrofit2.Response
 
 class ArisansApiRepo {
@@ -13,5 +10,8 @@ class ArisansApiRepo {
     }
     suspend fun postLogin(loginData:LoginPost):Response<LoginResponseModel>{
         return RetrofitInstance.arisansApi.postLogin(loginData)
+    }
+    suspend fun getRandomArisanList():Response<List<HomeArisan>> {
+        return RetrofitInstance.arisansApi.loadRandomArisanList()
     }
 }

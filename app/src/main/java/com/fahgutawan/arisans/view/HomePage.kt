@@ -1,6 +1,7 @@
 package com.fahgutawan.arisans.view
 
 import android.widget.Space
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.*
 import androidx.compose.foundation.interaction.InteractionSource
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -82,7 +83,7 @@ fun HomePage(
         item {
             Spacer(modifier = Modifier.height(16.dp))
         }
-        items(5) {
+        items(myViewModel.homeTest.value) {
             RandomArisanSection()
             Spacer(modifier = Modifier.height(16.dp))
         }
@@ -206,89 +207,132 @@ fun BannerSection() {
 @Composable
 fun RandomArisanSection() {
     val width = LocalConfiguration.current.screenWidthDp
-    val scaledHeight = width / 16 * 5
+    val scaledAnimatedHeight = remember {
+        mutableStateOf((width / 16 * 5).dp)
+    }
+    val isExpanded = remember {
+        mutableStateOf(false)
+    }
+    val scaledHeight = (width / 16 * 5).dp
+    val animatedCardDp = animateDpAsState(targetValue = scaledAnimatedHeight.value)
+
+    if (isExpanded.value)
+        scaledAnimatedHeight.value = scaledHeight * 2
+    else
+        scaledAnimatedHeight.value = scaledHeight
 
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(scaledHeight.dp)
-            .clip(RoundedCornerShape(CornerSize(14.dp)))
-            .background(color = GreenLight)
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = rememberRipple(bounded = true, color = Color.Black),
-                onClick = {
-                    //IMPLEMENT HERE
-                }
-            ),
+            .height(animatedCardDp.value)
+            .clip(RoundedCornerShape(CornerSize(14.dp))),
+        contentAlignment = Alignment.TopCenter
     ) {
-        Column(
+        //White Card
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(scaledHeight.dp)
-                .padding(all = 16.dp),
-            verticalArrangement = Arrangement.SpaceBetween,
-            horizontalAlignment = Alignment.CenterHorizontally
+                .height(animatedCardDp.value)
+                .clip(RoundedCornerShape(CornerSize(14.dp)))
+                .background(color = White)
+        )
+
+        //Green Card
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(scaledHeight)
+                .clip(RoundedCornerShape(CornerSize(14.dp)))
+                .background(color = GreenLight)
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = rememberRipple(bounded = true, color = Color.Black),
+                    onClick = {
+                        if (myViewModel.homeIsArisanLocked.value) {
+                            isExpanded.value = !isExpanded.value
+                        }
+                    }
+                ),
         ) {
-            //FIRST ROW
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(text = "Rp...", style = Typography.h2, color = GreenDark, fontSize = 12.sp)
-                Text(text = "#123456", style = Typography.h2, color = GreenDark, fontSize = 12.sp)
-            }
-
-            //SECOND ROW
-            Text(
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth(),
-                text = "UserName",
-                style = Typography.h2,
-                color = GrayDark,
-                textAlign = TextAlign.Start
-            )
-
-            //THIRD ROW
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
+                    .fillMaxWidth()
+                    .height(scaledHeight)
+                    .padding(all = 16.dp),
+                verticalArrangement = Arrangement.SpaceBetween,
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                //Jumlah orang
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_home_people),
-                        contentDescription = "People",
-                        tint = GreenDark
+                //FIRST ROW
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(text = "Rp...", style = Typography.h2, color = GreenDark, fontSize = 12.sp)
+                    Text(
+                        text = "#123456",
+                        style = Typography.h2,
+                        color = GreenDark,
+                        fontSize = 12.sp
                     )
-                    Text(text = "5/10", style = Typography.h2, color = GreenDark, fontSize = 12.sp)
                 }
 
-                //Status locked
-                var lockIcon = remember {
-                    mutableStateOf(R.drawable.ic_home_unlock)
-                }
-                if (myViewModel.homeIsArisanLocked.value) {
-                    lockIcon.value = R.drawable.ic_home_lock
-                } else {
-                    lockIcon.value = R.drawable.ic_home_unlock
-                }
-                Box(
+                //SECOND ROW
+                Text(
                     modifier = Modifier
-                        .size(32.dp)
-                        .clip(RoundedCornerShape(CornerSize(12.dp)))
-                        .background(color = OrangeDark),
-                    contentAlignment = Alignment.Center
+                        .fillMaxWidth(),
+                    text = "UserName",
+                    style = Typography.h2,
+                    color = GrayDark,
+                    textAlign = TextAlign.Start
+                )
+
+                //THIRD ROW
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Icon(
-                        painter = painterResource(id = lockIcon.value),
-                        contentDescription = "Lock Status",
-                        tint = GrayDark
-                    )
+                    //Jumlah orang
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_home_people),
+                            contentDescription = "People",
+                            tint = GreenDark
+                        )
+                        Text(
+                            text = "5/10",
+                            style = Typography.h2,
+                            color = GreenDark,
+                            fontSize = 12.sp
+                        )
+                    }
+
+                    //Status locked
+                    var lockIcon = remember {
+                        mutableStateOf(R.drawable.ic_home_unlock)
+                    }
+                    if (myViewModel.homeIsArisanLocked.value) {
+                        lockIcon.value = R.drawable.ic_home_lock
+                    } else {
+                        lockIcon.value = R.drawable.ic_home_unlock
+                    }
+                    Box(
+                        modifier = Modifier
+                            .size(32.dp)
+                            .clip(RoundedCornerShape(CornerSize(12.dp)))
+                            .background(color = OrangeDark),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            painter = painterResource(id = lockIcon.value),
+                            contentDescription = "Lock Status",
+                            tint = GrayDark
+                        )
+                    }
                 }
             }
         }
     }
+
 }

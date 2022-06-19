@@ -45,6 +45,7 @@ fun BasePage(scope: CoroutineScope, scaffoldState: ScaffoldState, firstLayerNavC
             MyBottomMenu(
                 height = bottomNavBarHeight.dp,
                 scope = scope,
+                firstNavController = firstLayerNavController,
                 navController = baseNavController
             )
         }

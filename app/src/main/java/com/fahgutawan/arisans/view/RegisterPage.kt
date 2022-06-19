@@ -34,7 +34,8 @@ fun RegisterPage(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(all = 32.dp),
+                .padding(all = 16.dp)
+                .padding(top = 32.dp, bottom = 32.dp),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
 

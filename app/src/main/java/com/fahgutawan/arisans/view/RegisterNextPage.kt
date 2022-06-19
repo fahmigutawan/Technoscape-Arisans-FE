@@ -76,40 +76,69 @@ fun RegisterNextPage(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
+                    //profile picture
                     val image = remember {
-                        mutableStateOf(R.drawable.ic_registernext_addphoto)
+                        mutableStateOf(R.drawable.ic_change_profile_background)
                     }
-                    val scaledPickImage = height / 4
-                    if (myViewModel.registerNextImagePicked.value == null) {
-                        IconButton(
-                            modifier = Modifier.size((scaledPickImage).dp),
-                            onClick = { pickImageLauncher.launch("image/*") }) {
-                            Icon(
-                                modifier = Modifier.size((scaledPickImage).dp),
-                                painter = rememberAsyncImagePainter(model = image.value),
-                                contentDescription = "Image",
-                                tint = Color.Black
+                    val scaledPickImage = height / 6
+                    Box(
+                        modifier = Modifier
+                            .width(scaledPickImage.dp)
+                            .height((scaledPickImage + (scaledPickImage / 6)).dp),
+                        contentAlignment = Alignment.BottomCenter
+                    ) {
+                        if (myViewModel.registerNextImagePicked.value == null) {
+                            Box(
+                                modifier = Modifier
+                                    .width(scaledPickImage.dp)
+                                    .height((scaledPickImage + 64).dp),
+                                contentAlignment = Alignment.TopCenter
+                            ) {
+                                IconButton(
+                                    modifier = Modifier.size((scaledPickImage).dp),
+                                    onClick = { pickImageLauncher.launch("image/*") }) {
+                                    Icon(
+                                        modifier = Modifier.size((scaledPickImage).dp),
+                                        painter = rememberAsyncImagePainter(model = image.value),
+                                        contentDescription = "Image",
+                                        tint = Color.Unspecified
 
-                            )
+                                    )
+                                }
+                            }
+                        } else {
+                            Box(
+                                modifier = Modifier
+                                    .width(scaledPickImage.dp)
+                                    .height((scaledPickImage + 64).dp),
+                                contentAlignment = Alignment.TopCenter
+                            ) {
+                                AsyncImage(
+                                    modifier = Modifier
+                                        .size((scaledPickImage).dp)
+                                        .clip(RoundedCornerShape(CornerSize(16.dp)))
+                                        .clickable(
+                                            interactionSource = remember { MutableInteractionSource() },
+                                            indication = rememberRipple(
+                                                bounded = true,
+                                                color = Color.Black
+                                            ),
+                                            onClick = {
+                                                pickImageLauncher.launch("image/*")
+                                            }
+                                        ),
+                                    model = myViewModel.registerNextImagePicked.value,
+                                    contentDescription = "PP",
+                                    contentScale = ContentScale.Crop
+                                )
+                            }
                         }
-                    } else {
-                        AsyncImage(
-                            modifier = Modifier
-                                .size((scaledPickImage).dp)
-                                .clip(RoundedCornerShape(CornerSize(16.dp)))
-                                .clickable(
-                                    interactionSource = remember { MutableInteractionSource() },
-                                    indication = rememberRipple(
-                                        bounded = true,
-                                        color = Color.Black
-                                    ),
-                                    onClick = {
-                                        pickImageLauncher.launch("image/*")
-                                    }
-                                ),
-                            model = myViewModel.registerNextImagePicked.value,
-                            contentDescription = "PP",
-                            contentScale = ContentScale.Crop
+
+                        Icon(
+                            modifier = Modifier.size((scaledPickImage / 3).dp),
+                            painter = rememberAsyncImagePainter(model = R.drawable.ic_change_profile_foreground),
+                            contentDescription = "Image",
+                            tint = Color.Unspecified
                         )
                     }
 
@@ -268,7 +297,7 @@ fun RegisterNextPage(
                                     }
                                 }
                             )
-                        }else{
+                        } else {
                             myViewModel.showSnackbar("Masukkan semua data dengan benar!")
                         }
                     },

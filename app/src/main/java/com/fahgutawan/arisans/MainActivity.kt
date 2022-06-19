@@ -62,34 +62,33 @@ class MainActivity : ComponentActivity() {
         setContent {
             ArisansTheme {
 
-                AddArisanPage()
-//                Surface(
-//                    modifier = Modifier.fillMaxSize(),
-//                    color = MaterialTheme.colors.background
-//                ) {
-//                    val scaffoldState = rememberScaffoldState()
-//                    snackbarHostState = scaffoldState.snackbarHostState
-//                    coroutineScope = rememberCoroutineScope()
-//                    Scaffold(scaffoldState = scaffoldState) {
-//                        Surface(modifier = Modifier.fillMaxSize()) {
-//                            FirstLayerNav(
-//                                scope = coroutineScope,
-//                                scaffoldState = scaffoldState
-//                            )
-//                        }
-//                    }
-//                }
-//
-//                if (myViewModel.isLoading.value) {
-//                    Surface(
-//                        Modifier
-//                            .fillMaxSize()
-//                            .alpha(0.5f), color = GrayDark) {
-//                    }
-//                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center){
-//                        CircularProgressIndicator()
-//                    }
-//                }
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colors.background
+                ) {
+                    val scaffoldState = rememberScaffoldState()
+                    snackbarHostState = scaffoldState.snackbarHostState
+                    coroutineScope = rememberCoroutineScope()
+                    Scaffold(scaffoldState = scaffoldState) {
+                        Surface(modifier = Modifier.fillMaxSize()) {
+                            FirstLayerNav(
+                                scope = coroutineScope,
+                                scaffoldState = scaffoldState
+                            )
+                        }
+                    }
+                }
+
+                if (myViewModel.isLoading.value) {
+                    Surface(
+                        Modifier
+                            .fillMaxSize()
+                            .alpha(0.5f), color = GrayDark) {
+                    }
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center){
+                        CircularProgressIndicator()
+                    }
+                }
             }
         }
     }

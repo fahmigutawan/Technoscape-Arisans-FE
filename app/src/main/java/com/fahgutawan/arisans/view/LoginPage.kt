@@ -46,7 +46,8 @@ fun LoginPage(scope: CoroutineScope, navController: NavController, scaffoldState
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(all = 32.dp),
+                .padding(all = 16.dp)
+                .padding(top = 16.dp, bottom = 16.dp),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             //Image vektor at top
@@ -187,7 +188,7 @@ fun LoginPage(scope: CoroutineScope, navController: NavController, scaffoldState
                                     }
                                 }
                             )
-                        }else{
+                        } else {
                             myViewModel.showSnackbar("Masukkan semua data dengan benar!")
                         }
                     },
