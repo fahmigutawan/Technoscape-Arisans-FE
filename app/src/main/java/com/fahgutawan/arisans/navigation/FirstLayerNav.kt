@@ -51,6 +51,9 @@ fun FirstLayerNav(scope: CoroutineScope, scaffoldState: ScaffoldState) {
         composable(route = FirstNavRoute.AddArisanScr.route) {
             AddArisanPage(scope, scaffoldState, navController)
         }
+        composable(route = FirstNavRoute.LandingArisan.route){
+            LandingArisan(firstLayerNavController = navController)
+        }
         composable(route = FirstNavRoute.DetailArisan.route) {
             ArisanPage(navController, myViewModel.arisanPicked.value!!)
         }

@@ -7,5 +7,6 @@ sealed class FirstNavRoute(val route:String){
     object RegisterNextScr:FirstNavRoute("registernext_scr")
     object BaseScr:FirstNavRoute("base_scr")
     object AddArisanScr:FirstNavRoute("addarisan_scr")
+    object LandingArisan:FirstNavRoute("landing_scr")
     object DetailArisan:FirstNavRoute("detailarisan_scr")
 }

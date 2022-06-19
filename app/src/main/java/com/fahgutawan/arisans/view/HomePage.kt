@@ -334,9 +334,7 @@ fun RandomArisanSection(firstLayerNavController: NavController, arisan:HomeArisa
                                 .padding(top = 8.dp),
                             onClick = {
                                 myViewModel.arisanPicked.value = arisan
-                                if(myViewModel.arisanPicked.value!=null){
-                                    firstLayerNavController.navigate(route = FirstNavRoute.DetailArisan.route)
-                                }
+                                firstLayerNavController.navigate(FirstNavRoute.LandingArisan.route)
                             },
                             colors = ButtonDefaults.buttonColors(backgroundColor = GreenDark),
                             shape = RoundedCornerShape(CornerSize(14.dp)),
@@ -363,9 +361,7 @@ fun RandomArisanSection(firstLayerNavController: NavController, arisan:HomeArisa
                                 isExpanded.value = !isExpanded.value
                             }else{
                                 myViewModel.arisanPicked.value = arisan
-                                if(myViewModel.arisanPicked.value!=null){
-                                    firstLayerNavController.navigate(route = FirstNavRoute.DetailArisan.route)
-                                }
+                                firstLayerNavController.navigate(FirstNavRoute.LandingArisan.route)
                             }
                         }
                     ),

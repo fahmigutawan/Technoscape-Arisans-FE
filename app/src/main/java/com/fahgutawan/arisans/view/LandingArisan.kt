@@ -23,20 +23,22 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.fahgutawan.arisans.R
 import com.fahgutawan.arisans.myViewModel
+import com.fahgutawan.arisans.navroute.FirstNavRoute
 import com.fahgutawan.arisans.ui.theme.Typography
 import com.fahgutawan.arisans.util.MyTopBar
 import com.tahutelor.arisans.ui.theme.*
 
 @Composable
-fun LandingArisan() {
-    LandingContent()
-    LandingTopBar()
+fun LandingArisan(firstLayerNavController: NavController) {
+    LandingContent(firstLayerNavController)
+    LandingTopBar(firstLayerNavController)
 }
 
 @Composable
-fun LandingContent() {
+fun LandingContent(firstLayerNavController: NavController) {
     val height = LocalConfiguration.current.screenHeightDp
     val scaledHeight = height / 10
 
@@ -239,7 +241,9 @@ fun LandingContent() {
                         .fillMaxWidth()
                         .padding(start = 8.dp, end = 8.dp),
                     onClick = {
-
+                        firstLayerNavController.navigate(route = FirstNavRoute.DetailArisan.route)
+                        if (myViewModel.arisanPicked.value != null) {
+                        }
                     },
                     colors = ButtonDefaults.buttonColors(backgroundColor = GreenDark),
                     shape = RoundedCornerShape(CornerSize(14.dp)),
@@ -253,7 +257,7 @@ fun LandingContent() {
 }
 
 @Composable
-fun LandingTopBar() {
+fun LandingTopBar(firstLayerNavController: NavController) {
     MyTopBar {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -261,7 +265,10 @@ fun LandingTopBar() {
         ) {
             IconButton(
                 onClick = {
-
+                    firstLayerNavController.popBackStack(
+                        route = FirstNavRoute.LandingArisan.route,
+                        inclusive = true
+                    )
                 }
             ) {
                 Icon(
